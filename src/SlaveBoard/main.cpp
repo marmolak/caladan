@@ -1,4 +1,3 @@
-// Load Wi-Fi library
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <LittleFS.h>
@@ -71,8 +70,7 @@ void send_index()
     server.send(404, "text/plain", "404: Not Found");
     return;
   }
-  
-  size_t sent = server.streamFile(file, "text/html");
+  size_t sent = server.streamFile(file, "text/html"); // And send it to the client
   file.close();
 }
 
@@ -110,7 +108,6 @@ void send_off()
 void loop()
 {
   MDNS.update();
-
   if (started)
   {
     const unsigned long current_time = millis();

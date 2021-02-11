@@ -6,3 +6,18 @@ background: linear-gradient(180deg, rgba(15,13,63,1) 0%, rgba(57,49,240,1) 54%, 
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0f0d3f",endColorstr="#f0ac31",GradientType=1);
 }
 
+container {
+    position: relative;
+  }
+  
+  .child {
+    position: absolute;
+    color: black;
+    background-color: white;;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40%;
+    width: 40%;
+    border-radius: 25px;
+  }

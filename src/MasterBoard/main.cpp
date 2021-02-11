@@ -4,6 +4,26 @@
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 
+#include "MasterBoard/HAL/Communication.hpp"
+
+// Workaround for newest c++14 version
+
+void operator delete(void *ptr, size_t size)
+{
+  (void) size;
+  free(ptr);
+}
+
+void operator delete[](void *ptr, size_t size)
+{
+    (void) size;
+    free(ptr);
+}
+
+/* GLOBALS */
+
+MasterBoardComm mb;
+
 const int trigPin = 19;    // Trigger
 const int echoPin = 18;    // Echo
 
@@ -35,8 +55,8 @@ void reset_conditions();
 
 void wakeup()
 {
-   sleep_disable();
-  detachInterrupt(digitalPinToInterrupt(20));
+    sleep_disable();
+    detachInterrupt(digitalPinToInterrupt(20));
 }
 
 void stop_pump()
@@ -104,14 +124,8 @@ float get_average_cm()
 bool should_stop()
 {
   static bool disable_loop = true;
-
-  const bool ok = Serial3.available();
-  if (!ok)
-  {
-    return disable_loop;
-  }
- 
-  const String s = Serial3.readString();
+  // stupid but we need it for now
+  const String s = mb.work();
 
   if (s == "STOP")
   {
@@ -121,7 +135,6 @@ bool should_stop()
 
     return disable_loop;  
   }
- 
 
   if (s == "START")
   {
@@ -149,7 +162,8 @@ bool should_stop()
     return disable_loop;
   }
 
-  Serial.println(s);
+  /*Serial.print("SlaveBoard: ");
+  Serial.println(s);*/
 
   disable_loop = true;
   return disable_loop;
@@ -319,6 +333,8 @@ void setup()
   // Communicate with esp
   Serial3.begin(9600);
 
+  mb.init();
+
   // humidity sensor
   pinMode(A8, INPUT);
 
@@ -345,12 +361,14 @@ void setup()
 static byte doing_nothing = 0;
 void loop()
 {
+  mb.update();
+
   if (doing_nothing > 5)
   {
-    Serial.print("Doing sleep");
-    Serial.flush();
+    //Serial.print("Doing sleep");
+    //Serial.flush();
     doing_nothing = 0;
-    deep_sleep();
+    //deep_sleep();
   }
   
   int conds = false;

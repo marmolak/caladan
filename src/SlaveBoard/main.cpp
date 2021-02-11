@@ -96,7 +96,7 @@ void setup()
   }
 
   MLOG("Wifi init...");
-  WiFi.begin(Config::Wifi::ssid, Config::Wifi::password);
+  WiFi.begin(FPSTR(Config::Wifi::ssid), FPSTR(Config::Wifi::password));
   while (WiFi.status() != WL_CONNECTED)
   {
       delay(500);
@@ -110,7 +110,7 @@ void setup()
   setup_OTA();
 
   MLOG("MDNS init...");
-  MDNS.begin(Config::Wifi::mdns_hostname);
+  MDNS.begin(FPSTR(Config::Wifi::mdns_hostname));
   MDNS.addService("http", "tcp", 80);
 }
 
